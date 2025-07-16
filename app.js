@@ -93,76 +93,100 @@ typeOfTriangle('happy', 3, false);
 
 // Exercise 5 Section
 console.log("EXERCISE 5:\n==========\n");
-function cellPhoneUsage(planLimit, day, usage) {
-  //grab all the paragraph elements for printing to
-  const daysLeftOutput = document.querySelector('.js-days-left');
-  const intendedOutput = document.querySelector('.js-intended');
-  const overUnderOutput = document.querySelector('.js-over-under');
-  const byHowMuchOutput = document.querySelector('.js-how-much');
-  const futurePlanOutput = document.querySelector('.js-plan');
+//grab the form
+const form = document.querySelector('.js-cell-phone-plan');
+//grab all the paragraph elements for printing to
+const daysLeftOutput = document.querySelector('.js-days-left');
+const intendedOutput = document.querySelector('.js-intended');
+const overUnderOutput = document.querySelector('.js-over-under');
+const byHowMuchOutput = document.querySelector('.js-how-much');
+const futurePlanOutput = document.querySelector('.js-plan');
+//listen for submit on the form
+form.addEventListener('submit', function (e) {
+  e.preventDefault();//prevents default action
+
+  //grab input element from DOM
+  const planTotalInput = document.querySelector('.js-total-plan-input');
+  const daysPastInput = document.querySelector('.js-days-past-input');
+  const dataUsedInput = document.querySelector('.js-data-used-input');
+
+  //gets values from inputs and converts to numbers
+  const planTotal = Number(planTotalInput.value);
+  const daysPast = Number(daysPastInput.value);
+  const dataUsed = Number(dataUsedInput.value);
   
-  
-  if (typeof planLimit === 'number' && typeof day === 'number' && typeof usage === 'number') {
-    if (planLimit <= usage) {
-      console.log('You have run out of data for this month');
-      return;
-    }
-
-
-    //calc days used and days remaining
-    const daysLeft = 30 - day;
-    daysLeftOutput.textContent = `${day} days used, ${daysLeft} days remaining`;
-
-    //calc intendedUsagePerDay
-    const intendedUsagePerDay = planLimit / 30;
-    intendedOutput.textContent = `Intended average daily use: ${intendedUsagePerDay.toFixed(2)} GB/day`;
-
-    //calc actualUsagePerDay
-    const actualUsagePerDay = usage / day;
-    const roundedActual = actualUsagePerDay.toFixed(2);
-
-    //calc monthly overage/underage
-    const overUnder = planLimit - (actualUsagePerDay * 30);
-    const roundedOverUnder = Math.abs(overUnder).toFixed(2);
-    const dataLeft = planLimit - usage;
-    const dataLeftPerDay = dataLeft / daysLeft;
-    const roundedLeftPerDay = dataLeftPerDay.toFixed(2);
-
-
-    //const byHowMuchOutput = document.querySelector('.js-how-much');
-    //const futurePlanOutput = document.querySelector('.js-plan');
-
-    //check which is higher and message about this
-    //log how far over or under current rate will lead to
-    //recommendation to reach dataLimit
-
-    if (actualUsagePerDay > intendedUsagePerDay) {
-      overUnderOutput.textContent = `You are EXCEEDING your average daily use (${roundedActual} GB/day).`;
-      byHowMuchOutput.textContent = `Continuing this high usage, you'll exceed your data plan by ${roundedOverUnder} GB.`;
-      futurePlanOutput.textContent = `To stay below your data plan, use no more than ${roundedLeftPerDay} GB/day`;
-    }
-    else if (actualUsagePerDay < intendedUsagePerDay) {
-      overUnderOutput.textContent = `You are BELOW your average daily use (${roundedActual} GB/day).`;
-      byHowMuchOutput.textContent = `Continuing this low usage, you'll be ${roundedOverUnder} GB under your plan limit.`;
-      futurePlanOutput.textContent = `To maximize usage of your data plan, use ${roundedLeftPerDay} GB/day`;
-    }
-    else
-      overUnderOutput.textContent = `You are RIGHT ON TARGET for your average daily use (${roundedActual} GB/day).`;
-    byHowMuchOutput.textContent = '';
-    futurePlanOutput.textContent = '';
-
-
-  } else {
-    daysLeftOutput.textContent = 'You did not enter proper data for this calculator.'
+  //checks if nothing or non-numbers were enters and gives error (and clears results) if needed
+  if (
+    planTotalInput.value.trim() === '' ||
+    daysPastInput.value.trim() === '' ||
+    dataUsedInput.value.trim() === '' ||
+    isNaN(planTotal) ||
+    isNaN(daysPast) ||
+    isNaN(dataUsed)
+  ) {
+    daysLeftOutput.textContent = '';
     intendedOutput.textContent = '';
     overUnderOutput.textContent = '';
     byHowMuchOutput.textContent = '';
     futurePlanOutput.textContent = '';
+    alert('You did not enter proper data for this calculator.');
+    return;
+  }
+  cellPhoneUsage(planTotal, daysPast, dataUsed);
+})
+
+function cellPhoneUsage(planLimit, day, usage) {
+  if (planLimit <= usage) {
+    daysLeftOutput.textContent = 'You have used all your data for this month.';
+    intendedOutput.textContent = '';
+    overUnderOutput.textContent = '';
+    byHowMuchOutput.textContent = '';
+    futurePlanOutput.textContent = '';
+    return;
   }
 
+  //calc days used and days remaining
+  const daysLeft = 30 - day;
+  daysLeftOutput.textContent = `${day} days used, ${daysLeft} days remaining`;
+
+  //calc intendedUsagePerDay
+  const intendedUsagePerDay = planLimit / 30;
+  intendedOutput.textContent = `Intended average daily use: ${intendedUsagePerDay.toFixed(2)} GB/day`;
+
+  //calc actualUsagePerDay
+  const actualUsagePerDay = usage / day;
+  const roundedActual = actualUsagePerDay.toFixed(2);
+
+  //calc monthly overage/underage
+  const overUnder = planLimit - (actualUsagePerDay * 30);
+  const roundedOverUnder = Math.abs(overUnder).toFixed(2);
+  const dataLeft = planLimit - usage;
+  const dataLeftPerDay = dataLeft / daysLeft;
+  const roundedLeftPerDay = dataLeftPerDay.toFixed(2);
+
+  //check which is higher and message about this
+  //log how far over or under current rate will lead to
+  //recommendation to reach dataLimit
+
+  if (actualUsagePerDay > intendedUsagePerDay) {
+    overUnderOutput.textContent = `You are EXCEEDING your average daily use (${roundedActual} GB/day).`;
+    byHowMuchOutput.textContent = `Continuing this high usage, you'll exceed your data plan by ${roundedOverUnder} GB.`;
+    futurePlanOutput.textContent = `To stay below your data plan, use no more than ${roundedLeftPerDay} GB/day`;
+  }
+  else if (actualUsagePerDay < intendedUsagePerDay) {
+    overUnderOutput.textContent = `You are BELOW your average daily use (${roundedActual} GB/day).`;
+    byHowMuchOutput.textContent = `Continuing this low usage, you'll be ${roundedOverUnder} GB under your plan limit.`;
+    futurePlanOutput.textContent = `To maximize usage of your data plan, use ${roundedLeftPerDay} GB/day`;
+  }
+  else {
+    overUnderOutput.textContent = `You are RIGHT ON TARGET for your average daily use (${roundedActual} GB/day).`;
+    byHowMuchOutput.textContent = '';
+    futurePlanOutput.textContent = '';
+  }
 }
 
+/*Test cases:
 cellPhoneUsage(100, 15, 56);
 cellPhoneUsage(100, 5, 10);
 cellPhoneUsage(90, 9, 27);
-//cellPhoneUsage("100", 15, 50);
+//cellPhoneUsage("100", 15, 50);*/
