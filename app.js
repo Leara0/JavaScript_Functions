@@ -74,7 +74,7 @@ function typeOfTriangle(side1, side2, side3) {
     if (side1 + side2 > side3 && side1 + side3 > side2 && side2 + side3 > side1) {
       //you have a triangle
       if (side1 === side2 && side2 === side3)
-        console.log(`Sides ${side1}, ${side2}, ${side3} make an equalateral triangle`);
+        console.log(`Sides ${side1}, ${side2}, ${side3} make an equilateral triangle`);
       else if (side1 === side2 || side2 === side3 || side1 === side3)
         console.log(`Sides ${side1}, ${side2}, ${side3} make an isosceles triangle`);
       else
